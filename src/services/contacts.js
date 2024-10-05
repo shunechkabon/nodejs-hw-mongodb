@@ -23,7 +23,7 @@ export const getAllContacts = async ({
     }
 
     const [contactsCount, contacts] = await Promise.all([
-    contactsQuery.countDocuments(),
+    ContactsCollection.countDocuments({ userId }),
         contactsQuery
             .skip(skip)
             .limit(limit)

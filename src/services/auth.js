@@ -27,22 +27,20 @@ export const loginUser = async (payload) => {
     const isPasswordValid = await bcrypt.compare(payload.password, user.password);
     if (!isPasswordValid) throw createHttpError(401, 'Invalid email or password');
 
+    await SessionsCollection.deleteOne({ userId: user._id });
+
     const accessToken = randomBytes(30).toString('base64');
     const refreshToken = randomBytes(30).toString('base64');
     // const accessToken = jwt.sign({ userId: user._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
     // const refreshToken = jwt.sign({ userId: user._id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '30d' });
 
-    await SessionsCollection.deleteOne({ userId: user._id });
-
-    await SessionsCollection.create({
+    return await SessionsCollection.create({
         userId: user._id,
         accessToken,
         refreshToken,
         accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
         refreshTokenValidUntil: new Date(Date.now() + THIRTY_DAYS),
     });
-
-    return { accessToken, refreshToken };
 };
 
 const createSession = () => {
@@ -94,4 +92,17 @@ console.log('Deleting old session with ID:', sessionId);
 
     console.log('Created new session:', createdSession);
     return createdSession; 
+};
+
+export const logoutUser = async ({ sessionId, refreshToken }) => {
+    const session = await SessionsCollection.findOne({
+        _id: sessionId,
+        refreshToken,
+    });
+
+    if (!session) {
+        throw createHttpError(401, 'Session not found');
+    }
+
+    await SessionsCollection.deleteOne({ _id: sessionId, refreshToken });
 };

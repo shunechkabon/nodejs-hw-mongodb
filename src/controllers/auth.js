@@ -1,7 +1,8 @@
 import {
     registerUser,
     loginUser,
-    refreshSession 
+    refreshSession,
+    logoutUser
 } from '../services/auth.js';
 import { THIRTY_DAYS } from '../constants/index.js';
 
@@ -24,9 +25,13 @@ export const loginUserController = async (req, res, next) => {
         
         res.cookie('refreshToken', session.refreshToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
             maxAge: new Date(Date.now() + THIRTY_DAYS),
         });
+
+        res.cookie('sessionId', session._id, {
+            httpOnly: true,
+            expires: new Date(Date.now() + THIRTY_DAYS),
+    });
 
         res.status(200).json({
             status: 200,
@@ -67,6 +72,22 @@ export const refreshSessionController = async (req, res, next) => {
                 accessToken: session.accessToken,
             },
         });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const logoutUserController = async (req, res, next) => {
+    try {
+        await logoutUser({
+            sessionId: req.cookies.sessionId,
+            refreshToken: req.cookies.refreshToken,
+        });
+
+        res.clearCookie('refreshToken');
+        res.clearCookie('sessionId');
+
+        res.status(204).send();
     } catch (error) {
         next(error);
     }

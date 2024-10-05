@@ -40,6 +40,4 @@ export const startServer = () => {
     app.listen(PORT, () => {
         console.log(`Server is running on port ${PORT}`);
     });
-
-    return app;
 };

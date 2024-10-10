@@ -3,10 +3,11 @@ import {
     registerUserController,
     loginUserController,
     refreshSessionController,
-    logoutUserController
+    logoutUserController,
+    requestResetEmailController
 } from '../controllers/auth.js';
 import { validateBody } from '../middlewares/validateBody.js';
-import { registerUserSchema, loginUserSchema } from '../validation/userValidation.js';
+import { registerUserSchema, loginUserSchema, requestResetEmailSchema } from '../validation/userValidation.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 
 const router = Router();
@@ -32,5 +33,11 @@ router.post(
     '/logout',
     ctrlWrapper(logoutUserController)
 ); 
+
+router.post(
+    '/send-reset-email',
+    validateBody(requestResetEmailSchema),
+    ctrlWrapper(requestResetEmailController),
+);
 
 export default router;

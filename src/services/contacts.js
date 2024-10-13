@@ -13,7 +13,8 @@ export const getAllContacts = async ({
     const limit = perPage;
     const skip = (page - 1) * perPage;
     
-    const contactsQuery = ContactsCollection.find({ userId });
+    const contactsQuery = ContactsCollection.find();
+    // const contactsQuery = ContactsCollection.find({ userId });
 
     if (filters.contactType) {
         contactsQuery.where('contactType').equals(filters.contactType);
@@ -23,7 +24,8 @@ export const getAllContacts = async ({
     }
 
     const [contactsCount, contacts] = await Promise.all([
-    ContactsCollection.countDocuments({ userId }),
+        ContactsCollection.countDocuments(),
+        // ContactsCollection.countDocuments({ userId }),
         contactsQuery
             .skip(skip)
             .limit(limit)
@@ -40,7 +42,8 @@ export const getAllContacts = async ({
 };
 
 export const getContactById = async (contactId, userId) => {
-    const contact = await ContactsCollection.findOne({ _id: contactId, userId });
+    const contact = await ContactsCollection.findOne({ _id: contactId });
+    // const contact = await ContactsCollection.findOne({ _id: contactId, userId });
     return contact;
 };
 
@@ -51,7 +54,9 @@ export const createContact = async (payload) => {
 
 export const updateContact = async (contactId, payload, userId, options = {}) => {
     const updatedContact = await ContactsCollection.findOneAndUpdate(
-        { _id: contactId, userId },
+        { _id: contactId },
+        // const updatedContact = await ContactsCollection.findOneAndUpdate(
+        // { _id: contactId, userId },
         payload,
         {
             new: true,

@@ -1,0 +1,69 @@
+tags:
+  - Contacts
+summary: Create a new contact
+operationId: createContact
+description: Add a new contact to the list.
+security:
+  - bearerAuth: []
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          name:
+            type: string
+            example: "John Doe"
+          phoneNumber:
+            type: string
+            example: "+1234567890"
+          email:
+            type: string
+            example: "johndoe@example.com"
+          isFavourite:
+            type: boolean
+            example: true
+          contactType:
+            type: string
+            example: "personal"
+responses:
+  '201':
+    description: Contact successfully created
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 201
+            message:
+              type: string
+              example: "Successfully created a contact!"
+            data:
+              type: object
+              properties:
+                _id:
+                  type: string
+                  example: "60c72b2f9f1b2c001c8e4e60"
+                name:
+                  type: string
+                  example: "John Doe"
+                phoneNumber:
+                  type: string
+                  example: "+1234567890"
+                email:
+                  type: string
+                  example: "johndoe@example.com"
+                isFavourite:
+                  type: boolean
+                  example: true
+                contactType:
+                  type: string
+                  example: "personal"
+                photo:
+                  type: string
+                  example: "http://example.com/photo.jpg"
+  '400':
+    description: Bad Request
